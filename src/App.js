@@ -1,28 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import fire from './config/fire';
+import React from 'react';
+import { BrowserRouter, Route } from 'react-router-dom';
 import Login from './Login';
 import Home from './Home';
+import Signup from './Signup';
+import { AuthProvider } from './Auth';
+import PrivateRoute from './PrivateRoute';
 
 import './App.css';
 
 const App = () => {
-  const [user, setUser] = useState(null);
-
-  const authListener = () => {
-    fire.auth().onAuthStateChanged(user => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-  };
-
-  useEffect(() => {
-    authListener();
-  }, []);
-
-  return <div className="App">{user ? <Home /> : <Login />}</div>;
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <div>
+          <PrivateRoute exact path="/" component={Home} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/signup" component={Signup} />
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 };
 
 export default App;
